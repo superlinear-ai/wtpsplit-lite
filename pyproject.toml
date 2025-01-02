@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry] # https://python-poetry.org/docs/pyproject/
 name = "wtpsplit-lite"
-version = "0.0.0"
+version = "0.1.0"
 description = "wtpsplit with minimal dependencies"
 authors = ["Laurent Sorber <laurent@superlinear.eu>"]
 readme = "README.md"
