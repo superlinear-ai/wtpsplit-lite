@@ -8,20 +8,18 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Install Poetry
-        run: pip install --no-input poetry
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Publish package
         run: |
-          poetry config pypi-token.pypi "${{ secrets.POETRY_PYPI_TOKEN_PYPI }}"
-          poetry publish --build
+          uv build
+          uv publish
