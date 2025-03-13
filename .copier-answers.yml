@@ -1,0 +1,12 @@
+_commit: v1.5.0
+_src_path: gh:superlinear-ai/substrate
+author_email: laurent@superlinear.eu
+author_name: Laurent Sorber
+project_description: wtpsplit with minimal dependencies
+project_name: wtpsplit-lite
+project_type: package
+project_url: https://github.com/superlinear-ai/wtpsplit-lite
+python_version: '3.10'
+typing: strict
+with_conventional_commits: true
+with_typer_cli: false

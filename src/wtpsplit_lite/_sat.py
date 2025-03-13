@@ -90,7 +90,7 @@ class SaT:
                 if onnx_path and not onnx_path.exists():
                     onnx_path = None
             else:
-                onnx_path = cached_hf_hub_download(
+                onnx_path = cached_hf_hub_download(  # type: ignore[assignment]
                     model_name_to_fetch,
                     "model_optimized.onnx",
                     **(from_pretrained_kwargs or {}),
