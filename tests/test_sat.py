@@ -1,7 +1,15 @@
 """Test Segment Any Text."""
 
+import sys
+import types
 import warnings
 from pathlib import Path
+
+# Mock mosestokenizer because it's not compatible with Python 3.12.
+if "mosestokenizer" not in sys.modules:
+    dummy = types.ModuleType("mosestokenizer")
+    dummy.MosesTokenizer = lambda *args, **kwargs: None  # type: ignore[attr-defined]
+    sys.modules["mosestokenizer"] = dummy
 
 import pytest
 from wtpsplit import SaT as SaTOriginal
@@ -59,6 +67,7 @@ def test_sat(
     sat_lite, sat_original = sat_lite_sat_original
     with warnings.catch_warnings():  # Ignore unnecessary treat_newline_as_space warning.
         warnings.filterwarnings("ignore", "treat_newline_as_space", category=UserWarning)
+        warnings.filterwarnings("ignore", "split_on_input_newlines", category=UserWarning)
         output_lite = sat_lite.split(text_or_texts)
         output_original = sat_original.split(text_or_texts, treat_newline_as_space=True)
     if isinstance(text_or_texts, str):
@@ -73,6 +82,7 @@ def test_sat(
     else:
         with warnings.catch_warnings():  # Ignore unnecessary treat_newline_as_space warning.
             warnings.filterwarnings("ignore", "treat_newline_as_space", category=UserWarning)
+            warnings.filterwarnings("ignore", "split_on_input_newlines", category=UserWarning)
             output_lite = list(output_lite)
             output_original = list(output_original)
         assert len(output_lite) == len(output_original)
