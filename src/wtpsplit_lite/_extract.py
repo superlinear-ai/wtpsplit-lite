@@ -62,7 +62,7 @@ def extract(
     """
     if "xlm" in model.config.model_type:
         use_subwords = True
-        if not tokenizer:
+        if tokenizer is None:
             tokenizer = XLMRobertaTokenizerFast.from_pretrained("facebookAI/xlm-roberta-base")
         # tokenizer.add_special_tokens({"additional_special_tokens": [AddedToken("\n")]})
         tokens = tokenizer(
