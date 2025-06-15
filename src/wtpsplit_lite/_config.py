@@ -38,10 +38,11 @@ class SubwordXLMConfig:
 
     @classmethod
     @cache
-    def from_pretrained(cls, pretrained_model_name_or_path: str) -> "SubwordXLMConfig":
-        is_local = Path.is_file(Path(pretrained_model_name_or_path))
+    def from_pretrained(cls, pretrained_model_name_or_path: str | Path) -> "SubwordXLMConfig":
+        model_path = Path(pretrained_model_name_or_path)
+        is_local = model_path.is_dir() and (model_path / "config.json").is_file()
         model_config_filepath = Path(
-            pretrained_model_name_or_path
+            (model_path / "config.json")
             if is_local
             else hf_hub_download(pretrained_model_name_or_path, "config.json")
         )

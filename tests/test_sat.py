@@ -12,6 +12,7 @@ if "mosestokenizer" not in sys.modules:
     sys.modules["mosestokenizer"] = dummy
 
 import pytest
+from huggingface_hub import hf_hub_download
 from wtpsplit import SaT as SaTOriginal
 
 from wtpsplit_lite import SaT as SaTLite
@@ -113,3 +114,13 @@ def test_weighting(sat: SaTLite, text: str) -> None:
     output_lite = sat.split(text, stride=128, block_size=256, weighting="hat")
     reconstructed_text_lite = "".join(output_lite)
     assert text == reconstructed_text_lite
+
+
+def test_local() -> None:
+    """Test loading a local model."""
+    model_filepath = hf_hub_download("segment-any-text/sat-3l-sm", filename="model_optimized.onnx")
+    model_dir = Path(model_filepath).parent
+    sat_lite = SaTLite(model_dir)
+    text = "This is a test This is another test."
+    output_lite = sat_lite.split(text)
+    assert output_lite == ["This is a test ", "This is another test."]
