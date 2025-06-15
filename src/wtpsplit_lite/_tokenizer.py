@@ -67,12 +67,14 @@ class XLMRobertaTokenizerFast:
     def from_pretrained(
         cls, pretrained_model_name_or_path: str | Path
     ) -> "XLMRobertaTokenizerFast":
-        model_path = Path(pretrained_model_name_or_path)
-        is_local = model_path.is_dir() and (model_path / "tokenizer.json").is_file()
-        tokenizer_filepath = Path(
-            (model_path / "tokenizer.json")
-            if is_local
-            else hf_hub_download(pretrained_model_name_or_path, "tokenizer.json")
-        )
-        tokenizer = Tokenizer.from_file(tokenizer_filepath.as_posix())
+        if (
+            isinstance(pretrained_model_name_or_path, str)
+            and not Path(pretrained_model_name_or_path).exists()
+        ):
+            tokenizer_json = Path(hf_hub_download(pretrained_model_name_or_path, "tokenizer.json"))
+        elif Path(pretrained_model_name_or_path).is_file():
+            tokenizer_json = Path(pretrained_model_name_or_path)
+        else:
+            tokenizer_json = Path(pretrained_model_name_or_path) / "tokenizer.json"
+        tokenizer = Tokenizer.from_file(tokenizer_json.as_posix())
         return cls(tokenizer)

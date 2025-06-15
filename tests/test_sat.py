@@ -118,7 +118,9 @@ def test_weighting(sat: SaTLite, text: str) -> None:
 
 def test_local() -> None:
     """Test loading a local model."""
-    model_filepath = hf_hub_download("segment-any-text/sat-3l-sm", filename="model_optimized.onnx")
+    model = "segment-any-text/sat-3l-sm"
+    model_filepath = hf_hub_download(model, filename="model_optimized.onnx")
+    _ = hf_hub_download(model, filename="config.json")
     tokenizer_filepath = hf_hub_download("facebookAI/xlm-roberta-base", filename="tokenizer.json")
     sat_lite = SaTLite(
         model_name_or_model=Path(model_filepath).parent,
