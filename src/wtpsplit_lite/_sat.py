@@ -4,6 +4,7 @@
 
 import math
 import os
+import warnings
 from functools import cache
 from pathlib import Path
 from typing import Any, Literal
@@ -59,6 +60,7 @@ class SaT:
     def __init__(
         self,
         model_name_or_model: str | Path,
+        tokenizer_name_or_path: str | Path = "facebookAI/xlm-roberta-base",
         from_pretrained_kwargs: dict[str, Any] | None = None,
         ort_providers: list[str] | None = None,
         ort_kwargs: dict[str, Any] | None = None,
@@ -73,7 +75,7 @@ class SaT:
         self.ort_providers = ort_providers
         self.ort_kwargs = ort_kwargs
         self.use_lora = False
-        self.tokenizer = XLMRobertaTokenizerFast.from_pretrained("facebookAI/xlm-roberta-base")
+        self.tokenizer = XLMRobertaTokenizerFast.from_pretrained(tokenizer_name_or_path)
 
         if isinstance(model_name_or_model, str | Path):
             model_name = str(model_name_or_model)
@@ -340,11 +342,18 @@ class SaT:
         strip_whitespace: bool,
         verbose: bool,
     ):
-        def get_default_threshold(model_str: str) -> float:
-            if "sm" in model_str:
-                return 0.25
+        def get_default_threshold(model_str: str):
+            # basic type check for safety
+            if not isinstance(model_str, str):
+                warnings.warn(  # type: ignore[unreachable]
+                    f"get_default_threshold received non-string argument: {type(model_str)}. Using base default.",
+                    stacklevel=2,
+                )
+                return 0.025  # default fallback
             if self.use_lora:
                 return 0.5
+            if "sm" in model_str:
+                return 0.25
             if "no-limited-lookahead" in model_str and "sm" not in model_str:
                 return 0.01
             return 0.025
